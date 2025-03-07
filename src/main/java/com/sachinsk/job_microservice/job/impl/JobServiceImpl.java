@@ -5,6 +5,7 @@ import com.sachinsk.job_microservice.job.JobRepository;
 import com.sachinsk.job_microservice.job.JobService;
 import com.sachinsk.job_microservice.job.dto.JobWithCompanyDTO;
 import com.sachinsk.job_microservice.job.external.Company;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,6 +19,9 @@ public class JobServiceImpl implements JobService {
 
     // private List<Job> jobs = new ArrayList<>();
     JobRepository jobRepository;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     //constructor - Since job repository is a bean managed by spring.. Because of this constructor it will be Autowired at runtime (No need to manage object & create instance and initialize it)
     public JobServiceImpl(JobRepository jobRepository) {
@@ -38,9 +42,9 @@ public class JobServiceImpl implements JobService {
         JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
         jobWithCompanyDTO.setJob(job);
 
-        RestTemplate restTemplate = new RestTemplate();
+        //RestTemplate restTemplate = new RestTemplate();
         Company company = restTemplate.getForObject(
-                "http://localhost:8081/companies/" + job.getCompanyId(),
+                "http://COMPANY-MICROSERVICE:8081/companies/" + job.getCompanyId(),
                 Company.class);
         jobWithCompanyDTO.setCompany(company);
 
