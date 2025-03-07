@@ -1,9 +1,11 @@
 package com.sachinsk.job_microservice.job.dto;
 
-import com.sachinsk.job_microservice.job.Job;
 import com.sachinsk.job_microservice.job.external.Company;
+import com.sachinsk.job_microservice.job.external.Review;
 
-public class JobWithCompanyDTO {
+import java.util.List;
+
+public class JobDTO {
     private Long id;
     private String title;
     private String description;
@@ -11,6 +13,8 @@ public class JobWithCompanyDTO {
     private String maxSalary;
     private String location;
     private Company company;
+
+    private List<Review> review;
 
     //Getters and Setters
     public Long getId() {
@@ -67,5 +71,13 @@ public class JobWithCompanyDTO {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public List<Review> getReview() {
+        return review;
+    }
+
+    public void setReview(List<Review> review) {
+        this.review = review;
     }
 }
