@@ -5,6 +5,7 @@ import com.sachinsk.job_microservice.job.JobRepository;
 import com.sachinsk.job_microservice.job.JobService;
 import com.sachinsk.job_microservice.job.dto.JobWithCompanyDTO;
 import com.sachinsk.job_microservice.job.external.Company;
+import com.sachinsk.job_microservice.job.mapper.JobMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -39,13 +40,15 @@ public class JobServiceImpl implements JobService {
     }
 
     private JobWithCompanyDTO convertToDTO(Job job) {
-        JobWithCompanyDTO jobWithCompanyDTO = new JobWithCompanyDTO();
-        jobWithCompanyDTO.setJob(job);
 
         //RestTemplate restTemplate = new RestTemplate();
         Company company = restTemplate.getForObject(
                 "http://COMPANY-MICROSERVICE:8081/companies/" + job.getCompanyId(),
                 Company.class);
+
+        //Using mapper here - to set job
+        JobWithCompanyDTO jobWithCompanyDTO = JobMapper.
+                mapToJobWithCompanyDto(job, company);
         jobWithCompanyDTO.setCompany(company);
 
         return jobWithCompanyDTO;
