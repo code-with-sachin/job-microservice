@@ -3,6 +3,8 @@ package com.sachinsk.job_microservice.job.impl;
 import com.sachinsk.job_microservice.job.Job;
 import com.sachinsk.job_microservice.job.JobRepository;
 import com.sachinsk.job_microservice.job.JobService;
+import com.sachinsk.job_microservice.job.clients.CompanyClient;
+import com.sachinsk.job_microservice.job.clients.ReviewClient;
 import com.sachinsk.job_microservice.job.dto.JobDTO;
 import com.sachinsk.job_microservice.job.external.Company;
 import com.sachinsk.job_microservice.job.external.Review;
@@ -28,9 +30,15 @@ public class JobServiceImpl implements JobService {
     @Autowired
     RestTemplate restTemplate;
 
+    private CompanyClient companyClient;
+    private ReviewClient reviewClient;
+
     //constructor - Since job repository is a bean managed by spring.. Because of this constructor it will be Autowired at runtime (No need to manage object & create instance and initialize it)
-    public JobServiceImpl(JobRepository jobRepository) {
+    public JobServiceImpl(JobRepository jobRepository,
+                          CompanyClient companyClient, ReviewClient reviewClient) {
         this.jobRepository = jobRepository;
+        this.companyClient = companyClient;
+        this.reviewClient = reviewClient;
     }
 
     @Override
@@ -45,19 +53,22 @@ public class JobServiceImpl implements JobService {
 
     private JobDTO convertToDTO(Job job) {
 
-        //RestTemplate restTemplate = new RestTemplate();
-        Company company = restTemplate.getForObject(
-                "http://COMPANY-MICROSERVICE:8081/companies/" + job.getCompanyId(),
-                Company.class);
-        //Since we will get List in Review, we will use exchange method
-        ResponseEntity<List<Review>> reviewResponse = restTemplate.exchange(
-                "http://REVIEW-MICROSERVICE:8083/reviews?companyId=" + job.getCompanyId(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Review>>() {
-                });
+//        //RestTemplate restTemplate = new RestTemplate();
+//        Company company = restTemplate.getForObject(
+//                "http://COMPANY-MICROSERVICE:8081/companies/" + job.getCompanyId(),
+//                Company.class);
+        Company company = companyClient.getCompany(job.getCompanyId());
 
-        List<Review> reviews = reviewResponse.getBody();
+//        //Since we will get List in Review, we will use exchange method
+//        ResponseEntity<List<Review>> reviewResponse = restTemplate.exchange(
+//                "http://REVIEW-MICROSERVICE:8083/reviews?companyId=" + job.getCompanyId(),
+//                HttpMethod.GET,
+//                null,
+//                new ParameterizedTypeReference<List<Review>>() {
+//                });
+//        List<Review> reviews = reviewResponse.getBody();
+
+        List<Review> reviews = reviewClient.getReviews(job.getCompanyId());
 
         //Using mapper here - to set job
         JobDTO jobDTO = JobMapper.
