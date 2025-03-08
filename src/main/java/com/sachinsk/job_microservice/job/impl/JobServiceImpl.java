@@ -9,6 +9,7 @@ import com.sachinsk.job_microservice.job.dto.JobDTO;
 import com.sachinsk.job_microservice.job.external.Company;
 import com.sachinsk.job_microservice.job.external.Review;
 import com.sachinsk.job_microservice.job.mapper.JobMapper;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -42,6 +43,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @CircuitBreaker(name = "companyBreaker")
     public List<JobDTO> findAll() {
         List<Job> jobs = jobRepository.findAll();
         List<JobDTO> jobDTOS = new ArrayList<>();
