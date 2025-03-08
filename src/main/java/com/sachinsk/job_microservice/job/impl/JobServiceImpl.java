@@ -43,7 +43,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    @CircuitBreaker(name = "companyBreaker")
+    @CircuitBreaker(name = "companyBreaker", fallbackMethod = "companyBreakerFallback")
     public List<JobDTO> findAll() {
         List<Job> jobs = jobRepository.findAll();
         List<JobDTO> jobDTOS = new ArrayList<>();
@@ -51,6 +51,12 @@ public class JobServiceImpl implements JobService {
         //using convertDTO method here using streams
         return jobs.stream().map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public List<String> companyBreakerFallback(Exception e){
+        List<String> list = new ArrayList<>();
+        list.add("Dummy Output");
+        return list;
     }
 
     private JobDTO convertToDTO(Job job) {
