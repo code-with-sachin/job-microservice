@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "REVIEW-MICROSERVICE")
+@FeignClient(name = "REVIEW-MICROSERVICE",
+        url = "${review-microservice.url}")
 public interface ReviewClient {
     @GetMapping("/reviews")
     List<Review> getReviews(@RequestParam("companyId") Long companyId);
